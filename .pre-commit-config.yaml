@@ -1,0 +1,116 @@
+default_language_version:
+  python: python3.12
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-ast
+        description: check python files parse as valid python
+      - id: check-builtin-literals
+        description: requires literal syntax for initializing empty/zero python builtin types (e.g. list() to [], dict() to {})
+      - id: check-case-conflict
+        description: checks for file name conflicts in case-insensitive filesystems
+      - id: check-docstring-first
+        description: prevents common error of defining a docstring after code
+      - id: check-executables-have-shebangs
+        description: ensures non-binary executables have a shebang (e.g. `#!/bin/bash`)
+        exclude: ^(.*\.geojson)$
+      - id: check-json
+        description: checks json files for parseable syntax
+      - id: check-shebang-scripts-are-executable
+        description: ensures non-binary files with a shebang are executable
+      - id: check-merge-conflict
+        description: checks for merge conflict strings in files (e.g. <<<<<<< HEAD)
+      - id: check-toml
+        description: checks toml files for parseable syntax
+      - id: check-xml
+        description: checks xml files for parseable syntax
+      - id: check-yaml
+        description: checks yaml files for parseable syntax
+        args: ["--unsafe"] # --unsafe = accept tags (e.g.: !Ref, !GetAtt, !Sub, !Join, etc..)
+      - id: debug-statements
+        description: checks for debugger imports and py37+ `breakpoint()` calls
+        exclude: ^(fond_cli/fond_cli/cli.py)$
+      - id: detect-private-key
+        description: checks for private keys (e.g. b'-----BEGIN RSA PRIVATE...')
+      - id: end-of-file-fixer
+        description: ensures that files are either empty, or end with one newline
+      - id: mixed-line-ending
+        description: replaces line endings with the UNIX 'lf' character (i.e. CRLF to LF).
+        args: ["--fix=lf"]
+      - id: name-tests-test
+        description: verifies test files are named consistently (i.e. test_filename)
+        args: ["--pytest-test-first"]
+      - id: pretty-format-json
+        description: sets a standard for formatting json files
+        args: ["--autofix"]
+      - id: requirements-txt-fixer
+        description: sorts entries alphabetically in requirements.txt
+      - id: trailing-whitespace
+        description: trims trailing whitespace
+        args: ["--markdown-linebreak-ext=md,rst"]
+        exclude: ^(.*\.csv)$
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.10.0
+    hooks:
+      - id: python-check-blanket-noqa
+        description: "enforce `# noqa` annotations always have specific codes (e.g. `# noqa: F401`). Used for ruff/flake8."
+      - id: python-check-blanket-type-ignore
+        description: "enforce `# type: ignore` annotations always have specific codes (e.g. `# type: ignore[attr-defined]`). Used for mypy."
+      - id: python-check-mock-methods
+        description: prevents common mistakes of `assert mck.not_called()`, `assert mck.called_once_with(...)` and `mck.assert_called`
+      - id: python-no-eval
+        description: checks for `eval()` built-in function
+      - id: python-no-log-warn
+        description: checks for deprecated `.warn()` method of python loggers
+      - id: python-use-type-annotations
+        description: enforces python3.6+ type annotations are used instead of type comments
+      - id: rst-directive-colons
+        description: detects mistake of rst directive not ending with double colon or space before the double colon
+      - id: rst-inline-touching-normal
+        description: detects mistake of inline code touching normal text in rst
+      - id: text-unicode-replacement-char
+        description: forbids files which have a UTF-8 Unicode replacement character
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.17.0
+    hooks:
+      - id: pyupgrade
+        description: automatically upgrades syntax as per newer python versions
+        args: ["--py311-plus"]
+  - repo: https://github.com/pre-commit/mirrors-autopep8
+    rev: v2.0.4
+    hooks:
+      - id: autopep8
+        description: automatically formats code to conform to the PEP 8 style guide
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: "v0.6.2"
+    hooks:
+      - id: ruff
+        description: collection of several linting plugins (isort, flake8, mccabe, etc...)
+        args: [--fix, --exit-non-zero-on-fix]
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+        description: opinionated code formatter
+  - repo: https://github.com/asottile/setup-cfg-fmt
+    rev: v2.5.0
+    hooks:
+      - id: setup-cfg-fmt
+        description: applies consistent format to `setup.cfg` files
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.9
+    hooks:
+      - id: bandit
+        description: finds common security issues in Python code
+        args: ["-c", "pyproject.toml"]
+        additional_dependencies: ["bandit[toml]"]
+  - repo: local
+    hooks:
+    -   id: pylint
+        name: pylint
+        entry: pylint
+        description: static code analyser - checks for errors, code smells, enforce coding standard, and make suggestions about refactoring code
+        language: system
+        types: [python]
+        require_serial: true
