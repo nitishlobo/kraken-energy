@@ -1,3 +1,4 @@
 -r prod.txt
 pre_commit~=4.0
 pylint~=3.2
+pylint-pydantic==0.3.0
