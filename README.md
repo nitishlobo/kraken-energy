@@ -77,6 +77,8 @@ Authored by Nitish Lobo.
     pytest
     ```
 
+    Note: the relevant test configurations have already been made and are in `pyproject.toml` > `Testing and coverage` > `[tool.pytest.ini_options]` > `addopts`, etc.
+
 ## Assumptions
 
 - All datetimes from the flow file are assumed to be in UTC.
