@@ -28,41 +28,29 @@ def parse_zhv_header(row: list[str]) -> ZHVHeader:
 
 def parse_mpan_core(row: list[str]) -> MPANCore:
     """Parse and validate MPAN core data."""
-    # Get list of MPAN core fields in the order they are defined in the model
     mpan_core_fields = list(MPANCore.model_fields.keys())
-    # Match MPAN core fields with values
     mpan_core_data = dict(zip(mpan_core_fields, row, strict=False))
-    # Parse and validate data
     return MPANCore.model_validate(mpan_core_data)
 
 
 def parse_site_visit(row: list[str]) -> SiteVisitJ0024:
     """Parse and validate site visit data."""
-    # Get list of site visit fields in the order they are defined in the model
     site_visit_fields = list(SiteVisitJ0024.model_fields.keys())
-    # Match site visit fields with values
     site_visit_data = dict(zip(site_visit_fields, row, strict=False))
-    # Parse and validate data
     return SiteVisitJ0024.model_validate(site_visit_data)
 
 
 def parse_meter_reading_type(row: list[str]) -> MeterReadingType:
     """Parse and validate meter reading type data."""
-    # Get list of meter reading type fields in the order they are defined in the model
     meter_reading_type_fields = list(MeterReadingType.model_fields.keys())
-    # Match meter reading type fields with values
     meter_reading_type_data = dict(zip(meter_reading_type_fields, row, strict=False))
-    # Parse and validate data
     return MeterReadingType.model_validate(meter_reading_type_data)
 
 
 def parse_zpt_footer(row: list[str]) -> ZPTFooter:
     """Parse and validate ZPT footer data."""
-    # Get list of footer fields in the order they are defined in the model
     zpt_footer_fields = list(ZPTFooter.model_fields.keys())
-    # Match footer fields with values
     zpt_footer_data = dict(zip(zpt_footer_fields, row, strict=False))
-    # Parse and validate data
     return ZPTFooter.model_validate(zpt_footer_data)
 
 
