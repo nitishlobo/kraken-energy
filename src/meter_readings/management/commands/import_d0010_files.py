@@ -16,6 +16,56 @@ from meter_readings.schemas.mpan_cores import MPANCore
 from meter_readings.schemas.site_visits import SiteVisitJ0024
 
 
+def parse_zhv_header(row: list[str]) -> ZHVHeader:
+    """Parse and validate ZHV header data."""
+    # Get list of header fields in the order they are defined in the model
+    zhv_header_fields = list(ZHVHeader.model_fields.keys())
+    # Match header fields with values
+    zhv_header_data = dict(zip(zhv_header_fields, row, strict=False))
+    # Parse and validate data
+    return ZHVHeader.model_validate(zhv_header_data)
+
+
+def parse_mpan_core(row: list[str]) -> MPANCore:
+    """Parse and validate MPAN core data."""
+    # Get list of MPAN core fields in the order they are defined in the model
+    mpan_core_fields = list(MPANCore.model_fields.keys())
+    # Match MPAN core fields with values
+    mpan_core_data = dict(zip(mpan_core_fields, row, strict=False))
+    # Parse and validate data
+    return MPANCore.model_validate(mpan_core_data)
+
+
+def parse_site_visit(row: list[str]) -> SiteVisitJ0024:
+    """Parse and validate site visit data."""
+    # Get list of site visit fields in the order they are defined in the model
+    site_visit_fields = list(SiteVisitJ0024.model_fields.keys())
+    # Match site visit fields with values
+    site_visit_data = dict(zip(site_visit_fields, row, strict=False))
+    # Parse and validate data
+    return SiteVisitJ0024.model_validate(site_visit_data)
+
+
+def parse_meter_reading_type(row: list[str]) -> MeterReadingType:
+    """Parse and validate meter reading type data."""
+    # Get list of meter reading type fields in the order they are defined in the model
+    meter_reading_type_fields = list(MeterReadingType.model_fields.keys())
+    # Match meter reading type fields with values
+    meter_reading_type_data = dict(zip(meter_reading_type_fields, row, strict=False))
+    # Parse and validate data
+    return MeterReadingType.model_validate(meter_reading_type_data)
+
+
+def parse_zpt_footer(row: list[str]) -> ZPTFooter:
+    """Parse and validate ZPT footer data."""
+    # Get list of footer fields in the order they are defined in the model
+    zpt_footer_fields = list(ZPTFooter.model_fields.keys())
+    # Match footer fields with values
+    zpt_footer_data = dict(zip(zpt_footer_fields, row, strict=False))
+    # Parse and validate data
+    return ZPTFooter.model_validate(zpt_footer_data)
+
+
 class Command(BaseCommand):
     """Import data from D0010 flow files into database."""
 
@@ -58,41 +108,28 @@ class Command(BaseCommand):
                     # Process file header
                     if row[0] == "ZHV" or row[0] == "ZHF":
                         header_present = True
-                        # Get list of header fields in the order they are defined in the model
-                        zhv_header_fields = list(ZHVHeader.model_fields.keys())
-                        # Match header fields with values
-                        zhv_header_data = dict(zip(zhv_header_fields, row, strict=False))
-                        # Parse and validate data
-                        zhv_header = ZHVHeader.model_validate(zhv_header_data)
+                        zhv_header = parse_zhv_header(row)
 
                     # Process MPAN core data
                     if row[0] == "026":
-                        mpan_core_fields = list(MPANCore.model_fields.keys())
-                        mpan_core_data = dict(zip(mpan_core_fields, row, strict=False))
-                        mpan_core = MPANCore.model_validate(mpan_core_data)
+                        mpan_core = parse_mpan_core(row)
 
                     # Process site visit data
-                    if row[0] == "027" or row[0] == "029":
-                        site_visit_fields = list(SiteVisitJ0024.model_fields.keys())
-                        site_visit_data = dict(zip(site_visit_fields, row, strict=False))
-
-                        if row[0] == "027":
-                            site_visit_1 = SiteVisitJ0024.model_validate(site_visit_data)
-                        elif row[0] == "029":
-                            site_visit_2 = SiteVisitJ0024.model_validate(site_visit_data)
+                    if row[0] == "027":
+                        site_visit_1 = parse_site_visit(row)
 
                     # Process meter reading data
                     if row[0] == "028":
-                        meter_reading_types_fields = list(MeterReadingType.model_fields.keys())
-                        meter_reading_types_data = dict(zip(meter_reading_types_fields, row, strict=False))
-                        meter_reading_types = MeterReadingType.model_validate(meter_reading_types_data)
+                        meter_reading_types = parse_meter_reading_type(row)
+
+                    # Process site visit data
+                    if row[0] == "029":
+                        site_visit_2 = parse_site_visit(row)
 
                     # Process file footer
                     if row[0] == "ZPT":
                         footer_present = True
-                        zpt_footer_fields = list(ZPTFooter.model_fields.keys())
-                        zpt_footer_data = dict(zip(zpt_footer_fields, row, strict=False))
-                        zpt_footer = ZPTFooter.model_validate(zpt_footer_data)
+                        zpt_footer = parse_zpt_footer(row)
 
                         # Exit reading file as we have read the footer
                         # Assumption: any data after file footer is either a blank line or invalid data
