@@ -17,8 +17,7 @@ from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-APP_DIR = BASE_DIR / "kraken"
-ENV_FILEPATH = APP_DIR / ".env"
+ENV_FILEPATH = BASE_DIR / ".env"
 load_dotenv(dotenv_path=ENV_FILEPATH)
 
 # Quick-start development settings - unsuitable for production
@@ -42,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "meter_readings",
 ]
 
 MIDDLEWARE = [
