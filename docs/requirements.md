@@ -22,6 +22,9 @@
     - results should show filename of the flow file that the reading came from
 - Test suite
 - Document any assumptions made or ideas to improve the project
+- Go through any unsafe production settings in settings.py
+  - Switch DEBUG from True to False
+  - See <https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/>
 - List of "what you didn't have time to complete"
 - Gzipped tarball in google drive with a link emailed back to <ben.smith1@kraken.tech>
 
