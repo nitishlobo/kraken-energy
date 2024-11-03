@@ -1,1 +1,0 @@
-"""Meter reading models."""
