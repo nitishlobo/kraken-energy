@@ -4,7 +4,7 @@ import re
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field, ValidationError, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 from meter_readings.utils.datetime_ import parse_datetime
 
@@ -48,7 +48,7 @@ class ZHVHeader(BaseModel):
 
         if not re.match(data_flow_pattern, value):
             msg = f"Invalid data flow format: {value}"
-            raise ValidationError(msg)
+            raise ValueError(msg)
 
         return value
 
