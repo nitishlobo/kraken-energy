@@ -12,6 +12,7 @@ from meter_readings.models.flow_files import FlowFile, FlowFileMetadata
 from meter_readings.schemas.footers import ZPTFooter
 from meter_readings.schemas.headers import ZHVHeader
 from meter_readings.schemas.meter_reading_types import MeterReadingType
+from meter_readings.schemas.meter_reading_validation_results import MeterReadingValidationResult
 from meter_readings.schemas.mpan_cores import MPANCore
 from meter_readings.schemas.register_readings import RegisterReading
 from meter_readings.schemas.site_visits import SiteVisit
@@ -53,6 +54,13 @@ def parse_register_reading(row: list[str]) -> RegisterReading:
     register_reading_fields = list(RegisterReading.model_fields.keys())
     register_reading_data = dict(zip(register_reading_fields, row, strict=False))
     return RegisterReading.model_validate(register_reading_data)
+
+
+def parse_meter_reading_validation_result(row: list[str]) -> MeterReadingValidationResult:
+    """Parse and validate meter reading validation result data."""
+    meter_reading_validation_result_fields = list(MeterReadingValidationResult.model_fields.keys())
+    meter_reading_validation_result_data = dict(zip(meter_reading_validation_result_fields, row, strict=False))
+    return MeterReadingValidationResult.model_validate(meter_reading_validation_result_data)
 
 
 def parse_zpt_footer(row: list[str]) -> ZPTFooter:
@@ -108,27 +116,39 @@ class Command(BaseCommand):
 
                     # Process MPAN core data
                     if row[0] == "026":
+                        entry = {}
                         mpan_core = parse_mpan_core(row)
+                        entry["mpan_core"] = mpan_core
 
                     # Process site visit data for MPAN core
                     if row[0] == "027":
                         mpan_site_visit = parse_site_visit(row)
+                        entry["mpan_site_visit"] = mpan_site_visit
 
                     # Process meter reading data
                     if row[0] == "028":
                         meter_reading_types = parse_meter_reading_type(row)
+                        entry["meter_reading_types"] = meter_reading_types
 
                     # Process site visit data for meter readings
                     if row[0] == "029":
                         meter_reading_site_visit = parse_site_visit(row)
+                        entry["meter_reading_site_visit"] = meter_reading_site_visit
 
                     # Process register reading data
                     if row[0] == "030":
                         register_reading = parse_register_reading(row)
+                        entry["register_reading"] = register_reading
+
+                    # Process meter reading validation result data
+                    if row[0] == "032":
+                        meter_reading_validation_result = parse_meter_reading_validation_result(row)
+                        entry["meter_reading_validation_result"] = meter_reading_validation_result
 
                     # Process site visit data for register readings
                     if row[0] == "033":
                         register_reading_site_visit = parse_site_visit(row)
+                        entry["register_reading_site_visit"] = register_reading_site_visit
 
                     # Process file footer
                     if row[0] == "ZPT":
