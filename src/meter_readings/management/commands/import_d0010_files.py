@@ -102,17 +102,21 @@ class Command(BaseCommand):
                     if row[0] == "026":
                         mpan_core = parse_mpan_core(row)
 
-                    # Process site visit data
+                    # Process site visit data for MPAN core
                     if row[0] == "027":
-                        site_visit_1 = parse_site_visit(row)
+                        mpan_site_visit = parse_site_visit(row)
 
                     # Process meter reading data
                     if row[0] == "028":
                         meter_reading_types = parse_meter_reading_type(row)
 
-                    # Process site visit data
+                    # Process site visit data for meter readings
                     if row[0] == "029":
-                        site_visit_2 = parse_site_visit(row)
+                        meter_reading_site_visit = parse_site_visit(row)
+
+                    # Process site visit data for register readings
+                    if row[0] == "033":
+                        register_reading_site_visit = parse_site_visit(row)
 
                     # Process file footer
                     if row[0] == "ZPT":
