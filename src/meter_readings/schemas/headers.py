@@ -6,7 +6,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
-from meter_readings.utils.datetime_ import parse_datetime
+from meter_readings.utils.datetimes import parse_datetime
+from meter_readings.utils.strings import validate_string_to_datetime
 
 
 class ZHVHeader(BaseModel):
@@ -29,16 +30,8 @@ class ZHVHeader(BaseModel):
     broadcast: str | None = Field(default="", max_length=1)
     test_data_flag: str | None = Field(default="", max_length=4)
 
-    @field_validator("file_created_at")
-    def validate_file_created_at(cls, value: str) -> str:
-        """Validate that file_created_at is the correct format: YYYYMMDDHHMMSS."""
-        try:
-            datetime.strptime(value, "%Y%m%d%H%M%S")  # noqa: DTZ007
-        except ValueError as error:
-            msg = f"file_created_at must be in the format 'YYYYMMDDHHMMSS' but is instead {value}."
-            raise ValueError(msg) from error
-
-        return value
+    # Validators
+    validate_file_created_at = field_validator("file_created_at")(validate_string_to_datetime)
 
     @field_validator("data_flow_and_version_number")
     def validate_data_flow_and_version_number(cls, value: str) -> str:

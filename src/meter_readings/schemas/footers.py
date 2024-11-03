@@ -5,7 +5,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
-from meter_readings.utils.datetime_ import parse_datetime
+from meter_readings.utils.datetimes import parse_datetime
+from meter_readings.utils.strings import coerce_string_to_int, validate_string_to_datetime
 
 
 class ZPTFooter(BaseModel):
@@ -20,29 +21,11 @@ class ZPTFooter(BaseModel):
     total_group_count: int
     checksum: int | None = Field(default=None)
     flow_count: int | None = Field(default=None)
-    file_completed_at: str | None = Field(default="", max_length=14)
+    file_completed_at: str = Field(default="", max_length=14)
 
-    @field_validator("checksum", mode="before")
-    def validate_checksum(cls, value: str) -> int | None:
-        """Coerce empty string to None and validate as int if non-empty."""
-        if value == "":
-            return None
-        return int(value)
-
-    @field_validator("file_completed_at")
-    def validate_file_completed_at(cls, value: str) -> str:
-        """Validate that file_completed_at is the correct format: YYYYMMDDHHMMSS."""
-        # Return empty string if value is empty as it is an optional field.
-        if value == "":
-            return value
-
-        try:
-            datetime.strptime(value, "%Y%m%d%H%M%S")  # noqa: DTZ007
-        except ValueError as error:
-            msg = f"file_completed_at must be in the format 'YYYYMMDDHHMMSS' but is instead {value}."
-            raise ValueError(msg) from error
-
-        return value
+    # Validators
+    coerce_checksum = field_validator("checksum", mode="before")(coerce_string_to_int)
+    validate_file_completed_at = field_validator("file_completed_at")(validate_string_to_datetime)
 
     @property
     def file_completed_at_datetime(self) -> datetime | None:
