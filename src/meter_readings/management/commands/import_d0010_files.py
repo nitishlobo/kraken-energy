@@ -11,6 +11,7 @@ from pydantic import ValidationError as PydanticValidationError
 from meter_readings.models.flow_files import FlowFile, FlowFileMetadata
 from meter_readings.schemas.footers import ZPTFooter
 from meter_readings.schemas.headers import ZHVHeader
+from meter_readings.schemas.mpan_cores import MPANCore
 
 
 class Command(BaseCommand):
@@ -62,6 +63,16 @@ class Command(BaseCommand):
                         # Parse and validate data
                         zhv_header = ZHVHeader.model_validate(zhv_header_data)
 
+                    # Process MPAN core data
+                    if row[0] == "026":
+                        # Get list of header fields in the order they are defined in the model
+                        mpan_core_fields = list(MPANCore.model_fields.keys())
+                        # Match header fields with values
+                        mpan_core_data = dict(zip(mpan_core_fields, row, strict=False))
+                        # Parse and validate data
+                        mpan_core = MPANCore.model_validate(mpan_core_data)
+
+                    # Process file footer
                     if row[0] == "ZPT":
                         footer_present = True
                         # Get list of header fields in the order they are defined in the model
