@@ -113,4 +113,13 @@ class EnergyReadingAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     )
 
     # Fields that can be searched
-    search_fields = ("mpan_core", "meter_id", "register_reading", "reading_at")
+    search_fields = (
+        "flow_file__name",
+        "mpan_core",
+        "meter_id",
+        "register_reading",
+        "reading_at",
+    )
+
+    # Date hierarchy to make it easier to navigate by dates
+    date_hierarchy = "reading_at"

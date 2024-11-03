@@ -68,6 +68,16 @@ Authored by Nitish Lobo.
     Example:  
     <http://127.0.0.1:8000/admin>
 
+9. Once in the `Energy Readings` view, you can search by either of the following:
+
+    - Flow file name, e.g.: `DTC5259`
+    - MPAN Core, e.g.: `1013044353630`
+    - Meter ID, e.g.: `D03L80840`
+    - Register reading, e.g.: `68902.0`
+    - Reading at, e.g.: `2016` or `2016-02` or `2016-02-21` (for year, year-month and year-month-day respectively)
+
+    Note: you can also browse via date hierarchy for ease of use.
+
 ### Steps for running the test suite
 
 1. Navigate to root directory of this project and then run the following:
@@ -93,6 +103,7 @@ Authored by Nitish Lobo.
 - Have a confirmation step before truncating all tables (management command) incase the user accidentally ran the command.
 - Normalise EnergyReading model into smaller models. Denormalising EnergyReading model would also mean that views need to be added rather than being limited to Django admin StackInline or TabularInline setup.
 - Create a view instead of using Django admin registers.
+- Have a view with some graphs to visualise the data and show users their energy usage based on their MPAN.
 - Add integration tests to complement existing unit tests.
 - Make `import_file()` in `src/meter_readings/management/commands/import_d0010_files.py` looping more efficient. Refactor so that the data isn't having to get looped over twice.
 
