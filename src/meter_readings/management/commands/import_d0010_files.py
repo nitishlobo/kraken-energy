@@ -11,6 +11,7 @@ from pydantic import ValidationError as PydanticValidationError
 from meter_readings.models.flow_files import FlowFile, FlowFileMetadata
 from meter_readings.schemas.footers import ZPTFooter
 from meter_readings.schemas.headers import ZHVHeader
+from meter_readings.schemas.meter_reading_types import MeterReadingType
 from meter_readings.schemas.mpan_cores import MPANCore
 from meter_readings.schemas.site_visits import SiteVisitJ0024
 
@@ -71,10 +72,20 @@ class Command(BaseCommand):
                         mpan_core = MPANCore.model_validate(mpan_core_data)
 
                     # Process site visit data
-                    if row[0] == "027":
+                    if row[0] == "027" or row[0] == "029":
                         site_visit_fields = list(SiteVisitJ0024.model_fields.keys())
                         site_visit_data = dict(zip(site_visit_fields, row, strict=False))
-                        site_visit = SiteVisitJ0024.model_validate(site_visit_data)
+
+                        if row[0] == "027":
+                            site_visit_1 = SiteVisitJ0024.model_validate(site_visit_data)
+                        elif row[0] == "029":
+                            site_visit_2 = SiteVisitJ0024.model_validate(site_visit_data)
+
+                    # Process meter reading data
+                    if row[0] == "028":
+                        meter_reading_types_fields = list(MeterReadingType.model_fields.keys())
+                        meter_reading_types_data = dict(zip(meter_reading_types_fields, row, strict=False))
+                        meter_reading_types = MeterReadingType.model_validate(meter_reading_types_data)
 
                     # Process file footer
                     if row[0] == "ZPT":
