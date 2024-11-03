@@ -62,7 +62,7 @@ J0024_VALID_SET = {
 }
 
 
-class SiteVisitJ0024(BaseModel):
+class SiteVisit(BaseModel):
     """Site visit schema for J0024.
 
     Key attributes:

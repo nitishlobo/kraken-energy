@@ -13,7 +13,8 @@ from meter_readings.schemas.footers import ZPTFooter
 from meter_readings.schemas.headers import ZHVHeader
 from meter_readings.schemas.meter_reading_types import MeterReadingType
 from meter_readings.schemas.mpan_cores import MPANCore
-from meter_readings.schemas.site_visits import SiteVisitJ0024
+from meter_readings.schemas.register_readings import RegisterReading
+from meter_readings.schemas.site_visits import SiteVisit
 
 
 def parse_zhv_header(row: list[str]) -> ZHVHeader:
@@ -33,11 +34,11 @@ def parse_mpan_core(row: list[str]) -> MPANCore:
     return MPANCore.model_validate(mpan_core_data)
 
 
-def parse_site_visit(row: list[str]) -> SiteVisitJ0024:
+def parse_site_visit(row: list[str]) -> SiteVisit:
     """Parse and validate site visit data."""
-    site_visit_fields = list(SiteVisitJ0024.model_fields.keys())
+    site_visit_fields = list(SiteVisit.model_fields.keys())
     site_visit_data = dict(zip(site_visit_fields, row, strict=False))
-    return SiteVisitJ0024.model_validate(site_visit_data)
+    return SiteVisit.model_validate(site_visit_data)
 
 
 def parse_meter_reading_type(row: list[str]) -> MeterReadingType:
@@ -45,6 +46,13 @@ def parse_meter_reading_type(row: list[str]) -> MeterReadingType:
     meter_reading_type_fields = list(MeterReadingType.model_fields.keys())
     meter_reading_type_data = dict(zip(meter_reading_type_fields, row, strict=False))
     return MeterReadingType.model_validate(meter_reading_type_data)
+
+
+def parse_register_reading(row: list[str]) -> RegisterReading:
+    """Parse and validate register reading data."""
+    register_reading_fields = list(RegisterReading.model_fields.keys())
+    register_reading_data = dict(zip(register_reading_fields, row, strict=False))
+    return RegisterReading.model_validate(register_reading_data)
 
 
 def parse_zpt_footer(row: list[str]) -> ZPTFooter:
@@ -113,6 +121,10 @@ class Command(BaseCommand):
                     # Process site visit data for meter readings
                     if row[0] == "029":
                         meter_reading_site_visit = parse_site_visit(row)
+
+                    # Process register reading data
+                    if row[0] == "030":
+                        register_reading = parse_register_reading(row)
 
                     # Process site visit data for register readings
                     if row[0] == "033":
