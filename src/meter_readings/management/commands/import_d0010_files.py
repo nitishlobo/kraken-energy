@@ -46,12 +46,15 @@ class Command(BaseCommand):
         self.stdout.write(f"Processing file: {file_path}")
 
         error_found = False
+        header_present = False
+        footer_present = False
         with file_path.open(mode="r") as file:
             reader = csv.reader(file, delimiter="|")
             for row in reader:
                 try:
                     # Process file header
                     if row[0] == "ZHV" or row[0] == "ZHF":
+                        header_present = True
                         # Get list of header fields in the order they are defined in the model
                         zhv_header_fields = list(ZHVHeader.model_fields.keys())
                         # Match header fields with values
@@ -60,6 +63,7 @@ class Command(BaseCommand):
                         zhv_header = ZHVHeader.model_validate(zhv_header_data)
 
                     if row[0] == "ZPT":
+                        footer_present = True
                         # Get list of header fields in the order they are defined in the model
                         zpt_footer_fields = list(ZPTFooter.model_fields.keys())
                         # Match header fields with values
@@ -83,26 +87,27 @@ class Command(BaseCommand):
         flow_file = FlowFile.objects.create(name=file_path.stem, extension=file_path.suffix)
 
         # Save metadata (from header and footer) to database
-        FlowFileMetadata.objects.create(
-            flow_file=flow_file,
-            header_format=zhv_header.header_format,
-            footer_format=zpt_footer.footer_format,
-            file_identifier=zpt_footer.file_identifier,
-            data_flow=zhv_header.data_flow,
-            data_flow_version=zhv_header.data_flow_version,
-            from_market_participant_role_code=zhv_header.from_market_participant_role_code,
-            from_market_participant_id=zhv_header.from_market_participant_id,
-            to_market_participant_role_code=zhv_header.to_market_participant_role_code,
-            to_market_participant_id=zhv_header.to_market_participant_id,
-            sending_application_id=zhv_header.sending_application_id,
-            receiving_application_id=zhv_header.receiving_application_id,
-            broadcast=zhv_header.broadcast,
-            test_data_flag=zhv_header.test_data_flag,
-            total_group_count=zpt_footer.total_group_count,
-            footer_checksum=zpt_footer.checksum,
-            flow_count=zpt_footer.flow_count,
-            file_created_at=zhv_header.file_created_at_datetime,
-            file_completed_at=zpt_footer.file_completed_at_datetime,
-        )
+        if header_present and footer_present:
+            FlowFileMetadata.objects.create(
+                flow_file=flow_file,
+                header_format=zhv_header.header_format,
+                footer_format=zpt_footer.footer_format,
+                file_identifier=zpt_footer.file_identifier,
+                data_flow=zhv_header.data_flow,
+                data_flow_version=zhv_header.data_flow_version,
+                from_market_participant_role_code=zhv_header.from_market_participant_role_code,
+                from_market_participant_id=zhv_header.from_market_participant_id,
+                to_market_participant_role_code=zhv_header.to_market_participant_role_code,
+                to_market_participant_id=zhv_header.to_market_participant_id,
+                sending_application_id=zhv_header.sending_application_id,
+                receiving_application_id=zhv_header.receiving_application_id,
+                broadcast=zhv_header.broadcast,
+                test_data_flag=zhv_header.test_data_flag,
+                total_group_count=zpt_footer.total_group_count,
+                footer_checksum=zpt_footer.checksum,
+                flow_count=zpt_footer.flow_count,
+                file_created_at=zhv_header.file_created_at_datetime,
+                file_completed_at=zpt_footer.file_completed_at_datetime,
+            )
 
         self.stdout.write(self.style.SUCCESS(f"Data imported successfully from {file_path}"))
