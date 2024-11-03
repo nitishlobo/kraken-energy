@@ -12,6 +12,7 @@ from meter_readings.models.flow_files import FlowFile, FlowFileMetadata
 from meter_readings.schemas.footers import ZPTFooter
 from meter_readings.schemas.headers import ZHVHeader
 from meter_readings.schemas.mpan_cores import MPANCore
+from meter_readings.schemas.site_visits import SiteVisitJ0024
 
 
 class Command(BaseCommand):
@@ -65,21 +66,21 @@ class Command(BaseCommand):
 
                     # Process MPAN core data
                     if row[0] == "026":
-                        # Get list of header fields in the order they are defined in the model
                         mpan_core_fields = list(MPANCore.model_fields.keys())
-                        # Match header fields with values
                         mpan_core_data = dict(zip(mpan_core_fields, row, strict=False))
-                        # Parse and validate data
                         mpan_core = MPANCore.model_validate(mpan_core_data)
+
+                    # Process site visit data
+                    if row[0] == "027":
+                        site_visit_fields = list(SiteVisitJ0024.model_fields.keys())
+                        site_visit_data = dict(zip(site_visit_fields, row, strict=False))
+                        site_visit = SiteVisitJ0024.model_validate(site_visit_data)
 
                     # Process file footer
                     if row[0] == "ZPT":
                         footer_present = True
-                        # Get list of header fields in the order they are defined in the model
                         zpt_footer_fields = list(ZPTFooter.model_fields.keys())
-                        # Match header fields with values
                         zpt_footer_data = dict(zip(zpt_footer_fields, row, strict=False))
-                        # Parse and validate data
                         zpt_footer = ZPTFooter.model_validate(zpt_footer_data)
 
                         # Exit reading file as we have read the footer
