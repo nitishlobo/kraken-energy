@@ -46,6 +46,11 @@ class RegisterReading(BaseModel):
         return float(value)
 
     @property
-    def file_reading_at_datetime(self) -> datetime | None:
+    def reading_at_datetime(self) -> datetime | None:
         """Return reading_at as a datetime object."""
         return parse_datetime(self.reading_at)
+
+    @property
+    def md_reset_at_datetime(self) -> datetime | None:
+        """Return md_reset_at as a datetime object."""
+        return parse_datetime(self.md_reset_at)

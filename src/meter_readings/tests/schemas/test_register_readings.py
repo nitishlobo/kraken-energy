@@ -1,6 +1,6 @@
 """Test register reading schema."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
 from pydantic import ValidationError
@@ -28,8 +28,8 @@ def test_valid_register_reading() -> None:
     assert register_reading.number_of_md_resets == 10
     assert register_reading.meter_reading_flag == "T"
     assert register_reading.reading_method == "N"
-    assert isinstance(register_reading.file_reading_at_datetime, datetime)
-    assert register_reading.file_reading_at_datetime == datetime(2023, 11, 1, 0, 0)  # noqa: DTZ001
+    assert isinstance(register_reading.reading_at_datetime, datetime)
+    assert register_reading.reading_at_datetime == datetime(2023, 11, 1, 0, 0, tzinfo=timezone.utc)
 
 
 def test_invalid_reading_at_format() -> None:

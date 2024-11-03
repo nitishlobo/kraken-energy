@@ -1,6 +1,6 @@
 """Tests for footer schemas for flow files."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
 
@@ -25,7 +25,7 @@ def test_zpt_footer_valid_data() -> None:
     assert footer.checksum == 123
     assert footer.flow_count == 10
     assert footer.file_completed_at == "20160302154650"
-    assert footer.file_completed_at_datetime == datetime(2016, 3, 2, 15, 46, 50)  # noqa: DTZ001
+    assert footer.file_completed_at_datetime == datetime(2016, 3, 2, 15, 46, 50, tzinfo=timezone.utc)
 
 
 def test_zpt_footer_optional_fields() -> None:
