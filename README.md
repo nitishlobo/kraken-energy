@@ -111,6 +111,7 @@ Authored by Nitish Lobo.
 
 - Would go through deployment checklist before releasing app to production:
   <https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/>
+  (includes but is not limited to turning off `DEBUG` in settings.py)
 
 ## Bonus features of this project
 
