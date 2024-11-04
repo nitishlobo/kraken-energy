@@ -47,7 +47,13 @@ Authored by Nitish Lobo.
     python manage.py migrate
     ```
 
-6. Create the superuser
+6. Import the data
+
+    ```bash
+    python manage.py import_d0010_files ../data
+    ```
+
+7. Create the superuser
 
     ```bash
     python manage.py createsuperuser
@@ -58,17 +64,17 @@ Authored by Nitish Lobo.
     Email address: <test@kraken.tech>  (without the <>)
     Password: (something secure)  
 
-7. Run the server locally
+8. Run the server locally
 
     ```bash
     python manage.py runserver
     ```
 
-8. Navigate to the admin web app on the browser as per the host and port stdout when you ran the above runserver command.  
+9. Navigate to the admin web app on the browser as per the host and port stdout when you ran the above runserver command.  
     Example:  
     <http://127.0.0.1:8000/admin>
 
-9. Once in the `Energy Readings` view, you can search by either of the following:
+10. Once in the `Energy Readings` view, you can search by either of the following:
 
     - Flow file name, e.g.: `DTC5259`
     - MPAN Core, e.g.: `1013044353630`
